@@ -51,7 +51,7 @@ elements.fetchBtn.addEventListener("click", () => {
 async function controller(urlAPI, type) {
 
   //how many items the user want to display in the screen..
-  elements.queryLimit.value;
+  const limit = elements.queryLimit.value;
 
   const response = await fetch(urlAPI);
   const data = await response.json();
