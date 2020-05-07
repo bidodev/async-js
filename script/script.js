@@ -37,28 +37,28 @@ const showResults = (element, type) => {
   }
 };
 
-document.querySelector(".fetch-values").addEventListener("click", () => {
-  //clean the UI before call for new results...
-  document.querySelector(".result").innerHTML = "";
-
-  //URL API
+elements.fetchBtn.addEventListener("click", () => {
   const type = elements.inputType.value;
   const urlAPI = `https://jsonplaceholder.typicode.com/${type}`;
-  const limit = document.querySelector(".limit").value;
 
-  //fetch values from the API.
-  fetch(urlAPI)
-    .then(result => {
-      result.json().then(data => {
-        //we received our data from the API.
-        for (let i = 0; i < limit; i++) {
-          const element = data[i];
+  //prepare the UI for the results
+  document.querySelector(".result").innerHTML = "";
 
-          showResults(element, type);
-        }
-      });
-    })
-    .catch(err => console.log(err));
-  //process the values from the API.
-  //return to the use
+  //call the controller function
+  controller(urlAPI, type);
 });
+
+async function controller(urlAPI, type) {
+
+  //how many items the user want to display in the screen..
+  elements.queryLimit.value;
+
+  const response = await fetch(urlAPI);
+  const data = await response.json();
+
+  for (let i = 0; i < limit; i++) {
+    const element = data[i];
+
+    showResults(element, type);
+  }
+}
