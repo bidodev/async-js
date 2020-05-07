@@ -1,64 +1,28 @@
+import Search from "./models/Search.js";
 import { DOMstrings as elements } from "./elements.js";
+import * as searchView from "./views.js";
 
-const showResults = (element, type) => {
-  let markUp = "";
+const controlSearch = async () => {
+  // get the query and limit from the view
+  const query = searchView.getType();
+  const limit = searchView.getLimit();
 
-  switch (type) {
-    case "photos":
-      const { albumId, id, title, url, thumbnailUrl } = element;
+  if (limit) {
+    // New search object and add to state
+    const search = new Search(query, limit);
+    console.log(search);
 
-      markUp = `
-        <div class="description">
-          <div class="title">${title}</div>
-          <div class="sub-desc">Album: ${albumId} ‧ Foto: ${id}</div>
+    //grab data
+    await search.fetchData();
 
-          <figure class="composition">
-            <img src=${thumbnailUrl} alt=${title}>
-            <img src=${url} alt=${title}>
-          </figure>
-        </div>`;
+    //Prepare the UI for
+    searchView.clearResults();
 
-      //insert the results
-      elements.resultDiv.insertAdjacentHTML("beforeend", markUp);
-      break;
-
-    case "users":
-      const { name, username, email } = element;
-
-      markUp = `
-            <div class="description">
-            <div class="title">Name: ${name}</div>
-            <div class="sub-desc">UserName: ${username} ‧ Email: ${email}</div>
-            </div>`;
-
-      //insert the results
-      elements.resultDiv.insertAdjacentHTML("beforeend", markUp);
-      break;
+    //render results on the UI
+    searchView.renderResults(search);
+  } else {
+    alert("Please insert a number..");
   }
 };
 
-elements.fetchBtn.addEventListener("click", () => {
-  const type = elements.inputType.value;
-  const urlAPI = `https://jsonplaceholder.typicode.com/${type}`;
-
-  //prepare the UI for the results
-  document.querySelector(".result").innerHTML = "";
-
-  //call the controller function
-  controller(urlAPI, type);
-});
-
-async function controller(urlAPI, type) {
-
-  //how many items the user want to display in the screen..
-  const limit = elements.queryLimit.value;
-
-  const response = await fetch(urlAPI);
-  const data = await response.json();
-
-  for (let i = 0; i < limit; i++) {
-    const element = data[i];
-
-    showResults(element, type);
-  }
-}
+elements.fetchBtn.addEventListener("click", controlSearch);
